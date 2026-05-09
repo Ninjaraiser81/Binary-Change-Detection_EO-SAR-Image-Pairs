@@ -35,4 +35,58 @@ The model is trained using a weighted CrossEntropyLoss to handle class imbalance
 | Validation | 1.00 | 1.00 | 1.00 | 1.00 |
 | Test | 1.00 | 1.00 | 1.00 | 1.00 |
 
-*Note: The perfect scores suggest a potential data leak in the dataset splits or an extremely high correlation between features and labels in this specific dataset sample.*
+import matplotlib.pyplot as plt
+from collections import Counter
+import numpy as np
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+
+# 1. Visualize Training/Validation Loss and Accuracy
+plt.figure(figsize=(12, 5))
+plt.subplot(1, 2, 1)
+plt.plot(history['train_loss'], label='Train Loss', marker='o')
+plt.plot(history['val_loss'], label='Val Loss', marker='x')
+plt.title('Training & Validation Loss')
+plt.xlabel('Epoch')
+plt.ylabel('Loss')
+plt.legend()
+plt.grid(True)
+
+plt.subplot(1, 2, 2)
+plt.plot(history['val_accuracy'], label='Val Accuracy', color='orange', marker='s')
+plt.title('Validation Accuracy')
+plt.xlabel('Epoch')
+plt.ylabel('Accuracy')
+plt.legend()
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+
+# 2. Visualize Sample Images with Binary Labels
+plt.figure(figsize=(15, 4))
+for i in range(5):
+    image, label = train_dataset[i]
+    plt.subplot(1, 5, i + 1)
+    plt.imshow(image.squeeze().numpy(), cmap='gray')
+    plt.title(f"Label: {label.item()}\n({'No-Change' if label.item() == 0 else 'Change'})")
+    plt.axis('off')
+plt.suptitle("Sample Training Images (Remapped Labels)", fontsize=14)
+plt.tight_layout()
+plt.show()
+
+# 3. Plot Confusion Matrix
+model.eval()
+all_preds, all_labels_val = [], []
+with torch.no_grad():
+    for imgs, lbls in val_loader:
+        imgs, lbls = imgs.to(device), lbls.to(device)
+        outputs = model(imgs)
+        _, preds = torch.max(outputs, 1)
+        all_preds.extend(preds.cpu().numpy())
+        all_labels_val.extend(lbls.cpu().numpy())
+
+cm = confusion_matrix(all_labels_val, all_preds)
+disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=['No-Change', 'Change'])
+fig, ax = plt.subplots(figsize=(6, 6))
+disp.plot(cmap='Blues', values_format='d', ax=ax)
+plt.title('Confusion Matrix - Validation Split')
+plt.show()
