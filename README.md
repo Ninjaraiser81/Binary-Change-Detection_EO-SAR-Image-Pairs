@@ -27,6 +27,6 @@ Training & Evaluation
 
 The model is trained using a weighted CrossEntropyLoss to handle class imbalance and an Adam optimizer.
 Results
-Split 	IoU 	Precision 	Recall 	F1-Score
-Validation 	1.00 	1.00 	1.00 	1.00
-Test 	1.00 	1.00 	1.00 	1.00
+Split 	    IoU 	Precision 	Recall 	F1-Score
+Validation 	1.00 	1.00 	    1.00 	1.00
+Test 	    1.00 	1.00 	    1.00 	1.00
