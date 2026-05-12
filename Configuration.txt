@@ -1,0 +1,49 @@
+data:
+  dataset_name: doron333/change-detection-dataset
+  image_size:
+  - 224
+  - 224
+  label_mapping:
+    original_0_1: 0
+    original_2_3: 1
+  num_input_channels: 3
+evaluation:
+  metrics:
+  - IoU
+  - Precision
+  - Recall
+  - F1-Score
+  - Confusion Matrix
+model:
+  architecture: SiameseNetwork
+  classifier_layers:
+  - in_features: 6272
+    out_features: 512
+  - in_features: 512
+    out_features: 2
+  feature_extractor_layers:
+  - kernel_size: 3
+    out_channels: 32
+    padding: 1
+    pool_kernel: 2
+    pool_stride: 2
+  - kernel_size: 3
+    out_channels: 64
+    padding: 1
+    pool_kernel: 2
+    pool_stride: 2
+  - kernel_size: 3
+    out_channels: 128
+    padding: 1
+    pool_kernel: 2
+    pool_stride: 2
+training:
+  batch_size: 8
+  device: cuda
+  epochs: 5
+  learning_rate: 0.0001
+  loss_function: CrossEntropyLoss
+  loss_weights:
+  - 0.75
+  - 1.5
+  optimizer: Adam
